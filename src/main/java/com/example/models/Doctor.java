@@ -1,6 +1,5 @@
 package com.example.models;
  
-import com.sun.istack.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
