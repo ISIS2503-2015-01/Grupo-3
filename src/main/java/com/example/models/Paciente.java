@@ -133,7 +133,7 @@ public class Paciente implements Serializable{
 
         episodios.add(epis);
       }
-         public void editarEpisodio(Date fecha, double nivelDeDolor,String localizacion, double intensidad, double alivio, ArrayList <String> medicamento )
+         public void editarEpisodio(Date fecha, double nivelDeDolor,String localizacion, double intensidad, double alivio, ArrayList <String> medicamento, ArrayList <String> alimentos, ArrayList <String> bebidas )
       {
         Episodio epis = new Episodio(fecha,nivelDeDolor,localizacion,intensidad,alivio,medicamento,alimentos,bebidas);
         episodios.add(epis);

@@ -56,31 +56,38 @@ public class DoctorService
     
     @GET
     @Path("/consultarEpisodiosFechas")
-    public ArrayList<Episodio> consultarEpisodiosFechas (int cedula,  Date fechaInic, Date fechaFin)
+    public ArrayList<Episodio> consultarEpisodiosFechas (int cedula,  String fechaInic, String fechaFin)
     {
-        if(c.buscarDoctor(cedula)!=null&& fechaFin!=null && fechaFin!=null)
+        if(c.buscarDoctor(cedula)!=null&& fechaFin!=null && fechaInic!=null)
         {
             DateFormat format = new SimpleDateFormat("MMMM d, yyyy");
-            /*try {
+            try {
                 Date fin = format.parse(fechaFin);
                 Date inic = format.parse(fechaInic);
                 return c.buscarDoctor(cedula).consultarEpisodiosPacienteFecha(cedula, inic, fin);
 
             } catch (ParseException ex) {
                 Logger.getLogger(DoctorService.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
-            
-          return c.buscarDoctor(cedula).consultarEpisodiosPacienteFecha(cedula, fechaInic, fechaFin);
+            }
         }
         return null;
     }
     
     @GET
     @Path("/consultarEpisodio")
-    public ArrayList<String> consultarEpisodio(int cedulaD, int cedulaP, Date fecha)
+    public ArrayList<String> consultarEpisodio(int cedulaD, int cedulaP, String fecha)
     {
+        DateFormat format = new SimpleDateFormat("MMMM d, yyyy");
         if(c.buscarDoctor(cedulaD)!=null)
-            return c.buscarDoctor(cedulaD).verEpisodio(cedulaP, fecha);
+            
+            try {
+                Date f = format.parse(fecha);
+                return c.buscarDoctor(cedulaD).verEpisodio(cedulaP, f);
+                
+
+            } catch (ParseException ex) {
+                Logger.getLogger(DoctorService.class.getName()).log(Level.SEVERE, null, ex);
+            }
         return null;
     }
     
