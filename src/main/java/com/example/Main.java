@@ -1,7 +1,5 @@
 package com.example;
 
-import javax.persistence.EntityManager;
-
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 

@@ -113,7 +113,7 @@ public class Paciente implements Serializable{
     }
      public void setApellido(String apellido)
     {
-        this.nombre = nombre;
+        this.apellido = apellido;
     }
       public void setCedula(int cedula)
     {
