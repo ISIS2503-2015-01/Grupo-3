@@ -13,42 +13,49 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ws.rs.FormParam;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 /**
  *
  * @author estudiante
  */
 @Path("/Doctor")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class DoctorService 
 {
-    private Clinica c;
+    private Clinica clinica;
+    
     public DoctorService()
     {
-        Clinica c = new Clinica();
+        clinica = Clinica.darInstancia();
     }
+    
     @POST
     @Path("/crearDoctor")
-    public void crearDoctor(@FormParam("nom")String nom, @FormParam("apellido")String apellido,@FormParam("ced") int ced)
+    public List<Doctor> crearDoctor(List<Doctor> doctores)
     {
-        if(c.buscarDoctor(ced)==null)
-        {
-        Doctor d = new Doctor(nom, apellido, ced);
-        
+        for (Doctor doctor : doctores) {
+            clinica.setDoctor(doctor);
         }
+        return doctores;
     }
+    
     @GET
     @Path("/consultarEpisodiosPaciente")
     public ArrayList<Episodio> conslutarEpisodiosPaciente(int cedulaP, int cedulaD)
     {
-                if(c.buscarDoctor(cedulaP)!=null)
+                if(clinica.buscarDoctor(cedulaP)!=null)
                 {
-                    return  c.buscarDoctor(cedulaD).consultarEpisodiosPaciente(cedulaP);
+                    return  clinica.buscarDoctor(cedulaD).consultarEpisodiosPaciente(cedulaP);
                 }
                 return null;
     }
@@ -57,13 +64,13 @@ public class DoctorService
     @Path("/consultarEpisodiosFechas")
     public ArrayList<Episodio> consultarEpisodiosFechas (int cedula,  String fechaInic, String fechaFin)
     {
-        if(c.buscarDoctor(cedula)!=null&& fechaFin!=null && fechaInic!=null)
+        if(clinica.buscarDoctor(cedula)!=null&& fechaFin!=null && fechaInic!=null)
         {
             DateFormat format = new SimpleDateFormat("MMMM d, yyyy");
             try {
                 Date fin = format.parse(fechaFin);
                 Date inic = format.parse(fechaInic);
-                return c.buscarDoctor(cedula).consultarEpisodiosPacienteFecha(cedula, inic, fin);
+                return clinica.buscarDoctor(cedula).consultarEpisodiosPacienteFecha(cedula, fechaInic, fechaFin);
 
             } catch (ParseException ex) {
                 Logger.getLogger(DoctorService.class.getName()).log(Level.SEVERE, null, ex);
@@ -77,11 +84,11 @@ public class DoctorService
     public ArrayList<String> consultarEpisodio(int cedulaD, int cedulaP, String fecha)
     {
         DateFormat format = new SimpleDateFormat("MMMM d, yyyy");
-        if(c.buscarDoctor(cedulaD)!=null)
+        if(clinica.buscarDoctor(cedulaD)!=null)
             
             try {
                 Date f = format.parse(fecha);
-                return c.buscarDoctor(cedulaD).verEpisodio(cedulaP, f);
+                return clinica.buscarDoctor(cedulaD).verEpisodio(cedulaP, f);
                 
 
             } catch (ParseException ex) {
