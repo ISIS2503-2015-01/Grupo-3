@@ -1,9 +1,12 @@
- package com.example.models;
+package com.example.models;
  
 import com.sun.istack.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -151,12 +154,14 @@ public class Doctor implements Serializable
         
     }
     
-   public ArrayList<String> verEpisodio(int cedula, Date fecha){
+   public ArrayList<String> verEpisodio(int cedula, Date fecha)
+   {
        for (int i = 0; i < pacientes.size(); i++) {
            if(pacientes.get(i).getCedula()==cedula){
-               pacientes.get(i).ge
+               //pacientes.get(i).ge
            }
        }
+       return null;
    }
   
        

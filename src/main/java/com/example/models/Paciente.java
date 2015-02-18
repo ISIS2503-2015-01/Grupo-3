@@ -129,15 +129,16 @@ public class Paciente implements Serializable{
       }
         public void agregarEpisodio(Date fecha, double nivelDeDolor,String localizacion, double intensidad, double alivio, ArrayList <String> medicamento,ArrayList <String> alimentos, ArrayList <String> bebidas )
       {
-        Episodio epis = new Episodio(fecha,nivelDeDolor,localizacion,intensidad,alivio,medicamento);
+        Episodio epis = new Episodio(fecha,nivelDeDolor,localizacion,intensidad,alivio,medicamento, alimentos,bebidas);
+
         episodios.add(epis);
       }
          public void editarEpisodio(Date fecha, double nivelDeDolor,String localizacion, double intensidad, double alivio, ArrayList <String> medicamento )
       {
-        Episodio epis = new Episodio(fecha,nivelDeDolor,localizacion,intensidad,alivio,medicamento);
+        Episodio epis = new Episodio(fecha,nivelDeDolor,localizacion,intensidad,alivio,medicamento,alimentos,bebidas);
         episodios.add(epis);
       }
-      
+        
      public ArrayList<Episodio> getEpisodios()
     {
         return episodios;
@@ -161,7 +162,7 @@ public class Paciente implements Serializable{
         for(int i=0; i<episodios.size(); i++)
         {
             Episodio epis=episodios.get(i);
-            if(epis.getFecha()> fechainicial||epis.getFecha()< fechafinal){
+            if(epis.darFecha().after( fechainicial)||epis.darFecha().before(fechafinal)){
                 episodiosFecha.add(epis);
             }
        
@@ -171,10 +172,15 @@ public class Paciente implements Serializable{
     
     public Episodio getEpisodio(Date fecha)
     {
-        for (int i = 0; i < episodios.size(); i++) {
-            Object arr = arr[i];
+        for (int i = 0; i < episodios.size(); i++) 
+        {
+            if (episodios.get(i).darFecha().equals(fecha))
+            {
+                return episodios.get(i);
+            }
             
         }
+        return null;
     }
 
 }
