@@ -33,7 +33,7 @@ public class PacienteService {
     static private Clinica clinica = Clinica.darInstancia();
 
     public PacienteService() {
-        
+
     }
 
     @POST
@@ -49,7 +49,7 @@ public class PacienteService {
     @Path("/agregarEpisodio")
     public List<Episodio> agregarEpisodio(List<Episodio> pEpisodios) {
         for (Episodio nEpisodio : pEpisodios) {
-            Paciente p = clinica.buscarPaciente(nEpisodio.getCedula()); 
+            Paciente p = clinica.buscarPaciente(nEpisodio.getCedula());
             if (p != null) {
                 p.agregarEpisodio(nEpisodio);
             } else {
@@ -87,7 +87,6 @@ public class PacienteService {
     @Path("/obtenerEpisodioFecha/{cedula}/{fechaInicial}/{fechaFinal}")
     public ArrayList<Episodio> verEpisodioFecha(@PathParam("cedula") String cedula, @PathParam("fechaInicial") String fechaInicial, @PathParam("fechaFinal") String fechaFinal) {//int ced, String fechainicial, String fechafinal) 
         try {
-            System.out.println("entro 2");
             Paciente pacient = clinica.buscarPaciente(Integer.parseInt(cedula));
             System.out.println(cedula);
             if (pacient == null) {
@@ -99,15 +98,18 @@ public class PacienteService {
         }
     }
 
- /**   @GET
-    @Path("/obtenerEpisodio")
-    public Episodio verEpisodioFecha(int ced, Date fecha) {
-        for (int i = 0; i < pacientes.size(); i++) {
-            if (pacientes.get(i).getCedula() == ced) {
-                return pacientes.get(i).getEpisodio(fecha);
+    @GET
+    @Path("/obtenerEpisodio/{cedula}/{fecha}")
+    public Episodio verEpisodioFecha(@PathParam("cedula") String cedula, @PathParam("fecha") String fecha) {
+        try {
+            Paciente pacient = clinica.buscarPaciente(Integer.parseInt(cedula));
+            if (pacient == null) {
+                System.out.println("paciente nulo");
             }
+            return pacient.getEpisodio(fecha);
+        } catch (Exception e) {
+            return new Episodio();
         }
-        return null;
-    }*/
+    }
 
 }

@@ -35,6 +35,7 @@ public class DoctorService
     private Clinica clinica;
     
     public DoctorService()
+            
     {
         clinica = Clinica.darInstancia();
     }
