@@ -141,18 +141,30 @@ public class Paciente implements Serializable {
     }
 
     public ArrayList<Episodio> getEpisodios() {
+        if (episodios == null) {
+            episodios = new ArrayList<Episodio>();
+        }
         return episodios;
     }
 
     public ArrayList<String> getMedicamentos() {
+        if (medicamentos == null) {
+            medicamentos = new ArrayList<String>();
+        }
         return medicamentos;
     }
 
     public ArrayList<String> getBebidas() {
+        if (bebidas == null) {
+            bebidas = new ArrayList<String>();
+        }
         return bebidas;
     }
 
     public ArrayList<String> getAlimentos() {
+        if (alimentos == null) {
+            alimentos = new ArrayList<String>();
+        }
         return alimentos;
     }
 

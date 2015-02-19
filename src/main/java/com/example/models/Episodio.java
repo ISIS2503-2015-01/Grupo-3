@@ -59,31 +59,25 @@ public class Episodio {
         return nivelAlivio;
     }
 
-    public String getMedicamentos() {
-        String s = new String();
-        for (int i = 0; i < medicamentos.size(); i++) {
-            String m = medicamentos.get(i);
-            s += m + " ";
+    public ArrayList<String> getMedicamentos() {
+        if (medicamentos == null) {
+            medicamentos = new ArrayList<String>();
         }
-        return s;
+        return medicamentos;
     }
 
-    public String getAlimentos() {
-        String s = new String();
-        for (int i = 0; i < alimentos.size(); i++) {
-            String m = alimentos.get(i);
-            s += m + " ";
+    public ArrayList<String> getAlimentos() {
+        if (alimentos == null) {
+            alimentos = new ArrayList<String>();
         }
-        return s;
+        return alimentos;
     }
 
-    public String getBebidas() {
-        String s = new String();
-        for (int i = 0; i < bebidas.size(); i++) {
-            String m = bebidas.get(i);
-            s += m + " ";
+    public ArrayList<String> getBebidas() {
+        if (bebidas == null) {
+            bebidas = new ArrayList<String>();
         }
-        return s;
+        return bebidas;
     }
 
     public int getCedula() {

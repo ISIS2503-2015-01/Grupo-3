@@ -20,6 +20,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -30,72 +31,41 @@ import javax.ws.rs.core.MediaType;
 @Path("/Doctor")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class DoctorService 
-{
+public class DoctorService {
+
     private Clinica clinica;
-    
-    public DoctorService()
-            
-    {
+
+    public DoctorService() {
         clinica = Clinica.darInstancia();
     }
-    
+
     @POST
     @Path("/crearDoctor")
-    public List<Doctor> crearDoctor(List<Doctor> doctores)
-    {
+    public List<Doctor> crearDoctor(List<Doctor> doctores) {
         for (Doctor doctor : doctores) {
             clinica.setDoctor(doctor);
         }
         return doctores;
     }
-    
-    @GET
-    @Path("/consultarEpisodiosPaciente")
-    public ArrayList<Episodio> conslutarEpisodiosPaciente(int cedulaP, int cedulaD)
-    {
-                if(clinica.buscarDoctor(cedulaP)!=null)
-                {
-                    return  clinica.buscarDoctor(cedulaD).consultarEpisodiosPaciente(cedulaP);
-                }
-                return null;
-    }
-    
-    @GET
-    @Path("/consultarEpisodiosFechas")
-    public ArrayList<Episodio> consultarEpisodiosFechas (int cedula,  String fechaInic, String fechaFin)
-    {
-        if(clinica.buscarDoctor(cedula)!=null&& fechaFin!=null && fechaInic!=null)
-        {
-            DateFormat format = new SimpleDateFormat("MMMM d, yyyy");
-            try {
-                Date fin = format.parse(fechaFin);
-                Date inic = format.parse(fechaInic);
-                return clinica.buscarDoctor(cedula).consultarEpisodiosPacienteFecha(cedula, fechaInic, fechaFin);
 
-            } catch (ParseException ex) {
-                Logger.getLogger(DoctorService.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return null;
-    }
-    
     @GET
-    @Path("/consultarEpisodio")
-    public ArrayList<String> consultarEpisodio(int cedulaD, int cedulaP, String fecha)
-    {
-        DateFormat format = new SimpleDateFormat("MMMM d, yyyy");
-        if(clinica.buscarDoctor(cedulaD)!=null)
-            
-            try {
-                Date f = format.parse(fecha);
-                return clinica.buscarDoctor(cedulaD).verEpisodio(cedulaP, f);
-                
-
-            } catch (ParseException ex) {
-                Logger.getLogger(DoctorService.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        return null;
+    @Path("/consultarEpisodiosPaciente/{cedulaPaciente}/{cedulaDoctor}")
+    public ArrayList<Episodio> conslutarEpisodiosPaciente(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor) {
+        return clinica.conslutarEpisodiosPaciente(cedulaPaciente, cedulaDoctor);
     }
-    
+
+    @GET
+    @Path("/consultarEpisodioFecha/{cedulaPaciente}/{cedulaDoctor}/{fechaInicial}/{fechaFinal}")
+    public ArrayList<Episodio> verEpisodioFecha(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor, @PathParam("fechaInicial") String fechaInicial, @PathParam("fechaFinal") String fechaFinal) {
+        Doctor doctor = clinica.buscarDoctor(cedulaDoctor);
+        return doctor.consultarEpisodiosPacienteFecha(cedulaPaciente, fechaInicial, fechaFinal);
+    }
+
+    @GET
+    @Path("/consultarEpisodio/{cedulaPaciente}/{cedulaDoctor}/{fecha}")
+    public Episodio consultarEpisodio(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor, @PathParam("fecha") String fecha) {
+        Doctor doctor = clinica.buscarDoctor(cedulaDoctor);
+        return doctor.consultarEpisodioPacienteFecha(cedulaPaciente, fecha);
+    }
+
 }

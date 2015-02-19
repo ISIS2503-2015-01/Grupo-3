@@ -94,6 +94,7 @@ public class PacienteService {
             }
             return pacient.getEpisodiosFechas(fechaInicial, fechaFinal);
         } catch (Exception e) {
+            
             return new ArrayList<Episodio>();
         }
     }

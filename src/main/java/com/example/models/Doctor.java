@@ -85,15 +85,12 @@ public class Doctor implements Serializable {
     }
 
     public ArrayList<Episodio> consultarEpisodiosPaciente(int cedula) {
-        ArrayList episodios = new ArrayList<Episodio>();
-        for (int i = 0; i < pacientes.size(); i++) {
-            if (pacientes.get(i).getCedula() == cedula) {
-
-                episodios = pacientes.get(i).getEpisodios();
+        for (Paciente paciente : pacientes) {
+            if (paciente.getCedula() == cedula) {
+                return paciente.getEpisodios();
             }
-
         }
-        return episodios;
+        return new ArrayList<Episodio>();
     }
 
     /**
@@ -121,25 +118,29 @@ public class Doctor implements Serializable {
         pacientes.add(paciente);
     }
 
-    public ArrayList<Episodio> consultarEpisodiosPacienteFecha(int cedula, String fechainicial, String fechafinal) {
-        ArrayList episodios = new ArrayList<Episodio>();
+    public ArrayList<Episodio> consultarEpisodiosPacienteFecha(int cedulaPaciente, String fechainicial, String fechafinal) {
+        if (pacientes == null) {
+            pacientes = new ArrayList<Paciente>();
+        }
         for (int i = 0; i < pacientes.size(); i++) {
-            if (pacientes.get(i).getCedula() == cedula) {
-
-                episodios = pacientes.get(i).getEpisodiosFechas(fechainicial, fechafinal);
+            if (pacientes.get(i).getCedula() == cedulaPaciente) {
+                return pacientes.get(i).getEpisodios();
             }
         }
-        return episodios;
+        return new ArrayList<Episodio>();
 
     }
 
-    public ArrayList<String> verEpisodio(int cedula, Date fecha) {
+    public Episodio consultarEpisodioPacienteFecha(int cedulaPaciente, String fecha) {
+        if (pacientes == null) {
+            pacientes = new ArrayList<Paciente>();
+        }
         for (int i = 0; i < pacientes.size(); i++) {
-            if (pacientes.get(i).getCedula() == cedula) {
-                //pacientes.get(i).ge
+            if (pacientes.get(i).getCedula() == cedulaPaciente) {
+                return pacientes.get(i).getEpisodio(fecha);
             }
         }
-        return null;
+        return new Episodio();
     }
 
 }

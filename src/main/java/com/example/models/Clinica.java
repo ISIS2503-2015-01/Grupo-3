@@ -73,4 +73,12 @@ public class Clinica {
         }
         return instancia;
     }
+
+    public ArrayList<Episodio> conslutarEpisodiosPaciente(int cedulaPaciente, int cedulaDoctor) {
+        Doctor doctor = buscarDoctor(cedulaDoctor);
+        if (doctor != null ) {
+            return doctor.consultarEpisodiosPaciente(cedulaPaciente);
+        }
+        return null;
+    }
 }
