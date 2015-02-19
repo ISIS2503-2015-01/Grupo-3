@@ -171,7 +171,7 @@ public class Paciente implements Serializable {
         return episodiosFecha;
     }
 
-    public Episodio getEpisodio(Date fecha) {
+    public Episodio getEpisodio(String fecha) {
         for (int i = 0; i < episodios.size(); i++) {
             if (episodios.get(i).getFecha().equals(fecha)) {
                 return episodios.get(i);
