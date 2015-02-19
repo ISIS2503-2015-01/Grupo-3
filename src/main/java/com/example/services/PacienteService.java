@@ -60,19 +60,6 @@ public class PacienteService {
     }
 
     @POST
-    @Path("/pruebaPost")
-    public String pruebaPost(String cadena1) {//, String cadena2, int num2) {
-        JSONParser jp = new JSONParser();
-        try {
-            Object ob = jp.parse(cadena1);
-            JSONArray o = (JSONArray) ob;
-            return ((JSONObject) o.get(1)).get("num1") + "";
-        } catch (Exception e) {
-            return "fail\n" + e.getMessage();
-        }
-    }
-
-    @POST
     @Path("/editarEpisodio")
     public void editarEpisodio(List<Episodio> pEpisodios) {
         for (Episodio nEpisodio : pEpisodios) {
