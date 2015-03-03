@@ -5,14 +5,31 @@
  */
 package com.example.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.xml.bind.annotation.XmlRootElement;
+import org.eclipse.persistence.nosql.annotations.DataFormatType;
+import org.eclipse.persistence.nosql.annotations.Field;
+import org.eclipse.persistence.nosql.annotations.NoSql;
 
+
+@NoSql(dataFormat=DataFormatType.MAPPED)
+@Entity
+@XmlRootElement
 /**
  *
  * @author estudiante
  */
-public class Clinica {
+public class Clinica implements Serializable {
+    
+    @Id
+ 	@GeneratedValue
+ 	@Field(name="_id")
+ 	private String id;
 
     private String nombre;
     private ArrayList<Doctor> doctor;
@@ -25,15 +42,12 @@ public class Clinica {
         pacientes = new ArrayList();
     }
 
-    public Doctor buscarDoctor(int ced) {
-        for (int i = 0; i < doctor.size(); i++) {
-            if (doctor.get(i).getCedula() == ced) {
-                return doctor.get(i);
-            }
-        }
-        return null;
-    }
-
+    //GET
+    public ArrayList<Paciente> getPacientes() {
+        return pacientes;
+    }    
+    
+    //SET
     public void setDoctor(Doctor nDoctor) {
         if (doctor == null) {
             doctor = new ArrayList<Doctor>();
@@ -45,17 +59,23 @@ public class Clinica {
         }
         doctor.add(nDoctor);
     }
-
-    public ArrayList<Paciente> getPacientes() {
-        return pacientes;
-    }
-
+        
     public void setPacientes(Paciente nPaciente) {
         if (pacientes == null) {
             pacientes = new ArrayList<Paciente>();
         }
         pacientes.add(nPaciente);
     }
+    
+    //SEARCH
+    public Doctor buscarDoctor(int ced) {
+        for (int i = 0; i < doctor.size(); i++) {
+            if (doctor.get(i).getCedula() == ced) {
+                return doctor.get(i);
+            }
+        }
+        return null;
+    }    
 
     public Paciente buscarPaciente(int pCedula) {
         for (Iterator<Paciente> iterator = pacientes.iterator(); iterator.hasNext();) {
@@ -67,18 +87,19 @@ public class Clinica {
         return null;
     }
 
-    public static Clinica darInstancia() {
-        if (instancia == null) {
-            instancia = new Clinica();
-        }
-        return instancia;
-    }
-
     public ArrayList<Episodio> conslutarEpisodiosPaciente(int cedulaPaciente, int cedulaDoctor) {
         Doctor doctor = buscarDoctor(cedulaDoctor);
         if (doctor != null ) {
             return doctor.consultarEpisodiosPaciente(cedulaPaciente);
         }
         return null;
+    }
+    
+    //INSTANCIA
+    public static Clinica darInstancia() {
+        if (instancia == null) {
+            instancia = new Clinica();
+        }
+        return instancia;
     }
 }
