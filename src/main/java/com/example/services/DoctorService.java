@@ -8,6 +8,7 @@ package com.example.services;
 import com.example.models.Clinica;
 import com.example.models.Doctor;
 import com.example.models.Episodio;
+import com.example.models.Paciente;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -5,11 +5,15 @@
  */
 package com.example.services;
 
+import com.example.PersistenceManager;
 import com.example.models.Clinica;
 import com.example.models.Episodio;
 import com.example.models.Paciente;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -30,10 +34,19 @@ import org.json.simple.parser.JSONParser;
 @Produces(MediaType.APPLICATION_JSON)
 public class PacienteService {
 
+    @PersistenceContext(unitName = "mongoPU")
+    EntityManager entityManager;
+
     static private Clinica clinica = Clinica.darInstancia();
 
-    public PacienteService() {
-
+    @PostConstruct
+    public void init() {
+        try {
+            entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+        } catch (Exception e) {
+            System.out.println("------------------------------------------------------------------------------------------------------------------");
+            e.printStackTrace();
+        }
     }
 
     @POST
@@ -41,6 +54,7 @@ public class PacienteService {
     public List<Paciente> agregarPacientes(List<Paciente> pac) {
         for (Paciente pacient : pac) {
             clinica.addPaciente(pacient);
+            System.out.println(clinica.getPacientes().size());
         }
         return pac;
     }
