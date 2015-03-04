@@ -40,32 +40,30 @@ public class DoctorService {
     }
 
     @POST
-    @Path("/crearDoctor")
+    @Path("/agregarDoctor")
     public List<Doctor> crearDoctor(List<Doctor> doctores) {
         for (Doctor doctor : doctores) {
-            clinica.setDoctor(doctor);
+            clinica.addDoctor(doctor);
         }
         return doctores;
     }
 
     @GET
     @Path("/consultarEpisodiosPaciente/{cedulaPaciente}/{cedulaDoctor}")
-    public ArrayList<Episodio> conslutarEpisodiosPaciente(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor) {
-        return clinica.conslutarEpisodiosPaciente(cedulaPaciente, cedulaDoctor);
+    public ArrayList<Episodio> conslutarEpisodiosDoctor(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor) {
+        return clinica.conslutarEpisodiosDoctor(cedulaPaciente, cedulaDoctor);
     }
 
     @GET
-    @Path("/consultarEpisodioFecha/{cedulaPaciente}/{cedulaDoctor}/{fechaInicial}/{fechaFinal}")
-    public ArrayList<Episodio> verEpisodioFecha(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor, @PathParam("fechaInicial") String fechaInicial, @PathParam("fechaFinal") String fechaFinal) {
-        Doctor doctor = clinica.buscarDoctor(cedulaDoctor);
-        return doctor.consultarEpisodiosPacienteFecha(cedulaPaciente, fechaInicial, fechaFinal);
+    @Path("/consultarEpisodiosPaciente/{cedulaPaciente}/{cedulaDoctor}/{fechaInicial}/{fechaFinal}")
+    public ArrayList<Episodio> conslutarEpisodiosDoctor(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor, @PathParam("fechaInicial") String fechaInicial, @PathParam("fechaFinal") String fechaFinal) {
+        return clinica.conslutarEpisodiosDoctor(cedulaPaciente, cedulaDoctor, fechaInicial, fechaFinal);
     }
 
     @GET
-    @Path("/consultarEpisodio/{cedulaPaciente}/{cedulaDoctor}/{fecha}")
-    public Episodio consultarEpisodio(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor, @PathParam("fecha") String fecha) {
-        Doctor doctor = clinica.buscarDoctor(cedulaDoctor);
-        return doctor.consultarEpisodioPacienteFecha(cedulaPaciente, fecha);
+    @Path("/consultarEpisodiosPaciente/{cedulaPaciente}/{cedulaDoctor}/{id}")
+    public Episodio consultarEpisodio(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor, @PathParam("id") String id) {
+        return clinica.conslutarEpisodioDoctor(id, cedulaPaciente, cedulaDoctor);
     }
 
 }

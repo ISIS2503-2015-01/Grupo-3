@@ -182,7 +182,7 @@ public class Doctor implements Serializable {
      *
      * @param cedulaPaciente La cédula del paciente a agregar
      */
-    public void agregarPaciente(int cedulaPaciente) {
+    public void addPaciente(int cedulaPaciente) {
         cedulaPacientes.add(cedulaPaciente);
     }
 

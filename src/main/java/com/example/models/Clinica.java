@@ -141,9 +141,10 @@ public class Clinica implements Serializable {
     // ADDER ----------------------------------
     /**
      * Método que agrega un episodio a un paciente
+     *
      * @param pEpisodio El episodio a agregar
      */
-    public void agregarEpisodio(Episodio pEpisodio) {
+    public void addEpisodio(Episodio pEpisodio) {
         Paciente paciente = buscarPaciente(pEpisodio.getCedula());
         if (null != paciente) {
             paciente.addEpisodio(pEpisodio);
@@ -152,9 +153,10 @@ public class Clinica implements Serializable {
 
     /**
      * Método que agrega un doctor asociado a la clínica
+     *
      * @param pDoctor El doctor a agregar
      */
-    public void agregarDoctor(Doctor pDoctor) {
+    public void addDoctor(Doctor pDoctor) {
         Doctor doctor = buscarDoctor(pDoctor.getCedula());
         if (doctor == null) {
             doctores.add(pDoctor);
@@ -163,16 +165,24 @@ public class Clinica implements Serializable {
 
     /**
      * Método que agrega un paciente a la clínica
-     * @param pPaciente 
+     *
+     * @param pPaciente
      */
-    public void agregarPaciente(Paciente pPaciente) {
+    public void addPaciente(Paciente pPaciente) {
+        // TODO falta agregar la relación con el doctor
         Paciente paciente = buscarPaciente(pPaciente.getCedula());
         if (paciente == null) {
             pacientes.add(pPaciente);
         }
     }
 
-    //SEARCH
+    //SEARCH ----------------------------------
+    /**
+     * Retorna el doctor con la cédula enviada por parámetro
+     *
+     * @param pCedula La cédula del doctor buscado
+     * @return El doctor buscado. null de lo contrario
+     */
     public Doctor buscarDoctor(int pCedula) {
         for (Doctor doctor : doctores) {
             if (doctor.getCedula() == pCedula) {
@@ -182,6 +192,12 @@ public class Clinica implements Serializable {
         return null;
     }
 
+    /**
+     * Retorna el paciente con la cédula pasada por parámetro
+     *
+     * @param pCedula La cédula del paciente buscado
+     * @return El paciente buscado. null de lo contrario
+     */
     public Paciente buscarPaciente(int pCedula) {
         for (Paciente paciente : pacientes) {
             if (paciente.getCedula() == pCedula) {
@@ -191,12 +207,82 @@ public class Clinica implements Serializable {
         return null;
     }
 
-    public ArrayList<Episodio> conslutarEpisodiosPaciente(int cedulaPaciente, int cedulaDoctor) {
-        Doctor doctor = buscarDoctor(cedulaDoctor);
-        if (doctor != null) {
-            return doctor.consultarEpisodiosPaciente(cedulaPaciente);
-        }
-        return null;
+    /**
+     * Retorna todos los episodios del paciente con cédula dada
+     *
+     * @param cedulaPaciente La cédula del paciente solicitado
+     * @param cedulaDoctor La cédula del doctor que atiende al paciente
+     * @return La lista de episodios del paciente solicitadoo
+     */
+    public ArrayList<Episodio> conslutarEpisodiosDoctor(int cedulaPaciente, int cedulaDoctor) {
+        // TODO revisar si doctores tiene asociado el paciente
+        Paciente paciente = buscarPaciente(cedulaPaciente);
+        return paciente.getEpisodios();
+    }
+    
+    /**
+     * Retorna el episodio con el id
+     * @param id El identificador del episodio
+     * @param cedulaPaciente La cédula del paciente solicitado
+     * @param cedulaDoctor La cédula del doctor que atiende al paciente
+     * @return 
+     */
+    public Episodio conslutarEpisodioDoctor(String id, int cedulaPaciente, int cedulaDoctor) {
+        // TODO revisar si doctores tiene asociado el paciente
+        Paciente paciente = buscarPaciente(cedulaPaciente);
+        return paciente.getEpisodio(id);
+    }
+ 
+    /**
+     * Retorna una lista con los episodios cuya fecha coincide con los parámetros dados
+     * @param cedulaPaciente La cédula del paciente solicitado
+     * @param cedulaDoctor La cédula del doctor que atiende al paciente
+     * @param fechaInicial Fecha inicial del intervalo a buscar
+     * @param fechaFinal Fecha final del intervalo a buscar
+     * @return Lista con los episodios resultantes
+     */
+    public ArrayList<Episodio> conslutarEpisodiosDoctor(int cedulaPaciente, int cedulaDoctor, String fechaInicial, String fechaFinal) {
+        // TODO revisar si doctores tiene asociado el paciente
+        Paciente paciente = buscarPaciente(cedulaPaciente);
+        return paciente.getEpisodiosFechas(fechaInicial, fechaFinal);
+    }
+    
+    /**
+     * Retorna todos los episodios del paciente con cédula dada
+     *
+     * @param cedulaPaciente La cédula del paciente solicitado
+     * @return La lista de episodios del paciente solicitadoo
+     */
+    public ArrayList<Episodio> conslutarEpisodiosPaciente(int cedulaPaciente) {
+        // TODO revisar si doctores tiene asociado el paciente
+        Paciente paciente = buscarPaciente(cedulaPaciente);
+        return paciente.getEpisodios();
+    }
+    
+    /**
+     * Retorna el episodio con el id
+     * @param id El identificador del episodio
+     * @param cedulaPaciente La cédula del paciente solicitado
+     * @return 
+     */
+    public Episodio conslutarEpisodioPaciente(String id, int cedulaPaciente) {
+        // TODO revisar si doctores tiene asociado el paciente
+        Paciente paciente = buscarPaciente(cedulaPaciente);
+        return paciente.getEpisodio(id);
+    }
+ 
+    /**
+     * Retorna una lista con los episodios cuya fecha coincide con los parámetros dados
+     * @param cedulaPaciente La cédula del paciente solicitado
+     * @param cedulaDoctor La cédula del doctor que atiende al paciente
+     * @param fechaInicial Fecha inicial del intervalo a buscar
+     * @param fechaFinal Fecha final del intervalo a buscar
+     * @return Lista con los episodios resultantes
+     */
+    public ArrayList<Episodio> conslutarEpisodiosPaciente(int cedulaPaciente, String fechaInicial, String fechaFinal) {
+        // TODO revisar si doctores tiene asociado el paciente
+        Paciente paciente = buscarPaciente(cedulaPaciente);
+        return paciente.getEpisodiosFechas(fechaInicial, fechaFinal);
     }
 
 }

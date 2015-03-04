@@ -40,7 +40,7 @@ public class PacienteService {
     @Path("/agregarPaciente")
     public List<Paciente> agregarPacientes(List<Paciente> pac) {
         for (Paciente pacient : pac) {
-            clinica.setPacientes(pacient);
+            clinica.addPaciente(pacient);
         }
         return pac;
     }
@@ -51,7 +51,7 @@ public class PacienteService {
         for (Episodio nEpisodio : pEpisodios) {
             Paciente p = clinica.buscarPaciente(nEpisodio.getCedula());
             if (p != null) {
-                p.agregarEpisodio(nEpisodio);
+                p.addEpisodio(nEpisodio);
             } else {
                 System.out.println("fail");
             }
@@ -59,45 +59,54 @@ public class PacienteService {
         return pEpisodios;
     }
 
-    @POST
-    @Path("/editarEpisodio")
-    public void editarEpisodio(List<Episodio> pEpisodios) {
-        for (Episodio nEpisodio : pEpisodios) {
-            Paciente p = clinica.buscarPaciente(nEpisodio.getCedula());
-            if (p != null) {
-                p.editarEpisodio(nEpisodio);
-            }
-        }
-    }
-
     @GET
-    @Path("/obtenerEpisodioFecha/{cedula}/{fechaInicial}/{fechaFinal}")
+    @Path("/obtenerEpisodios/{cedula}/{fechaInicial}/{fechaFinal}")
     public ArrayList<Episodio> verEpisodioFecha(@PathParam("cedula") String cedula, @PathParam("fechaInicial") String fechaInicial, @PathParam("fechaFinal") String fechaFinal) {//int ced, String fechainicial, String fechafinal) 
         try {
             Paciente pacient = clinica.buscarPaciente(Integer.parseInt(cedula));
-            System.out.println(cedula);
-            if (pacient == null) {
+            if (pacient != null) {
+                return pacient.getEpisodiosFechas(fechaInicial, fechaFinal);
+            } else {
                 System.out.println("paciente nulo");
+                return new ArrayList<Episodio>();
             }
-            return pacient.getEpisodiosFechas(fechaInicial, fechaFinal);
+
         } catch (Exception e) {
-            
             return new ArrayList<Episodio>();
         }
     }
 
     @GET
-    @Path("/obtenerEpisodio/{cedula}/{fecha}")
-    public Episodio verEpisodioFecha(@PathParam("cedula") String cedula, @PathParam("fecha") String fecha) {
+    @Path("/obtenerEpisodios/{cedula}/{id}")
+    public Episodio verEpisodioFecha(@PathParam("cedula") String cedula, @PathParam("id") String id) {
         try {
             Paciente pacient = clinica.buscarPaciente(Integer.parseInt(cedula));
-            if (pacient == null) {
+            if (null == pacient) {
                 System.out.println("paciente nulo");
+                return new Episodio();
+            } else {
+                return pacient.getEpisodio(id);
             }
-            return pacient.getEpisodio(fecha);
+
         } catch (Exception e) {
             return new Episodio();
         }
     }
 
+    @GET
+    @Path("/obtenerEpisodios/{cedula}")
+    public ArrayList<Episodio> verEpisodioFecha(@PathParam("cedula") String cedula) {
+        try {
+            Paciente pacient = clinica.buscarPaciente(Integer.parseInt(cedula));
+            if (null == pacient) {
+                System.out.println("paciente nulo");
+                return new ArrayList<Episodio>();
+            } else {
+                return pacient.getEpisodios();
+            }
+
+        } catch (Exception e) {
+            return new ArrayList<Episodio>();
+        }
+    }
 }

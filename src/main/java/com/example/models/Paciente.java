@@ -5,14 +5,20 @@
  */
 package com.example.models;
 
+import com.sun.istack.NotNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.eclipse.persistence.nosql.annotations.DataFormatType;
 import org.eclipse.persistence.nosql.annotations.Field;
@@ -20,9 +26,10 @@ import org.eclipse.persistence.nosql.annotations.NoSql;
 
 /**
  * Clase Paciente
+ *
  * @author estudiante
  */
-@NoSql(dataFormat=DataFormatType.MAPPED)
+@NoSql(dataFormat = DataFormatType.MAPPED)
 @Entity
 @XmlRootElement
 public class Paciente implements Serializable {
@@ -32,26 +39,36 @@ public class Paciente implements Serializable {
     //-----------------------------------------------------------
     private static final long serialVersionUID = 1L;
 
-   	@Id
- 	@GeneratedValue
- 	@Field(name="_id")
- 	private String id;
+    @Id
+    @GeneratedValue
+    @Field(name = "_id")
+    private String id;
+
+    @NotNull
+    @Column(name = "create_at", updatable = false)
+    @Temporal(TemporalType.DATE)
+    private Calendar createdAt;
+
+    @NotNull
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.DATE)
+    private Calendar updatedAt;
 
     /**
      * Nombre del paciente
      */
     private String nombre;
-    
+
     /**
      * Apellido del paciente
      */
     private String apellido;
-    
+
     /**
      * Cédula del paciente
      */
     private int cedula;
-    
+
     /**
      * Lista de episodios
      */
@@ -64,11 +81,12 @@ public class Paciente implements Serializable {
      * Constructor de la clase Paciente (sin argumentos)
      */
     public Paciente() {
-
+        episodios = new ArrayList<Episodio>();
     }
 
     /**
      * Constructor de la clase Paciente (con argumentos)
+     *
      * @param pNombre El nombre del paciente
      * @param pApellido El apellido del paciente
      * @param pCedula La cédula del paciente
@@ -77,16 +95,16 @@ public class Paciente implements Serializable {
         this.nombre = pNombre;
         this.apellido = pApellido;
         this.cedula = pCedula;
+        episodios = new ArrayList<Episodio>();
     }
 
     //------------------------------------------------------------------------------------------------------
     // Métodos
     //------------------------------------------------------------------------------------------------------
-    
     // GETTERS ----------------------------------
-    
     /**
      * Retorna el nombre del paciente
+     *
      * @return Nombre del paciente
      */
     public String getNombre() {
@@ -95,6 +113,7 @@ public class Paciente implements Serializable {
 
     /**
      * Retorna el apellido del paciente
+     *
      * @return Apellido del paciente
      */
     public String getApellido() {
@@ -103,14 +122,16 @@ public class Paciente implements Serializable {
 
     /**
      * Retorna la cédula del paciente
+     *
      * @return La cédula del paciente
      */
     public int getCedula() {
         return cedula;
     }
-    
+
     /**
      * Retorna la lista de episodios
+     *
      * @return La lista de episodios
      */
     public ArrayList<Episodio> getEpisodios() {
@@ -119,13 +140,15 @@ public class Paciente implements Serializable {
         }
         return episodios;
     }
-    
+
     /**
      * Retorna un episodio dado su Id
+     *
      * @param pId El Id del episodio solicitado
-     * @return El episodio con el Id especificado. Si no lo encuentra retorna null.
+     * @return El episodio con el Id especificado. Si no lo encuentra retorna
+     * null.
      */
-    public Episodio getEpisodio(String pId){
+    public Episodio getEpisodio(String pId) {
         for (Episodio episodio : episodios) {
             if (episodio.getId().equals(pId)) {
                 return episodio;
@@ -135,7 +158,9 @@ public class Paciente implements Serializable {
     }
 
     /**
-     * Retorna un arreglo con los episodios cuya fecha está eentre los elementos pasados por parametros
+     * Retorna un arreglo con los episodios cuya fecha está eentre los elementos
+     * pasados por parametros
+     *
      * @param fechainicial La fecha inicial buscada
      * @param fechafinal La fecha final buscada
      * @return Lista con los epiodios cuya fecha coincide con los parámetros.
@@ -149,11 +174,11 @@ public class Paciente implements Serializable {
         }
         return episodiosFecha;
     }
-    
+
     // SETTERS ----------------------------------
-    
     /**
      * Modifica el nombre del paciente
+     *
      * @param pNombre Nombre del paciente
      */
     public void setNombre(String pNombre) {
@@ -163,6 +188,7 @@ public class Paciente implements Serializable {
 
     /**
      * Modifica el apellido del paciente
+     *
      * @param pApellido El apellido del paciente
      */
     public void setApellido(String pApellido) {
@@ -171,26 +197,29 @@ public class Paciente implements Serializable {
 
     /**
      * Madifica la cédula del paciente
+     *
      * @param pCedula La cédula del paciente
      */
     public void setCedula(int pCedula) {
         cedula = pCedula;
     }
-    
+
     /**
      * Modifica la lista de episodios
+     *
      * @param pEpisodios La lista de episodios
      */
-    public void setEpisodios(ArrayList<Episodio> pEpisodios){
+    public void setEpisodios(ArrayList<Episodio> pEpisodios) {
         episodios = pEpisodios;
     }
 
     // ADDER ----------------------------------
     /**
      * Método que agrega un episodio
+     *
      * @param pEpisodio El episodio a agregar
      */
     public void addEpisodio(Episodio pEpisodio) {
         episodios.add(pEpisodio);
-    }    
+    }
 }
