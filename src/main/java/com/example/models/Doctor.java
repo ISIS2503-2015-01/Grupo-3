@@ -16,138 +16,190 @@ import org.eclipse.persistence.nosql.annotations.NoSql;
  *
  * @author Mauricio
  */
-@NoSql(dataFormat=DataFormatType.MAPPED)
+@NoSql(dataFormat = DataFormatType.MAPPED)
 @Entity
 @XmlRootElement
 public class Doctor implements Serializable {
 
     //-----------------------------------------------------------
-    // Atributos
+    // Constantes
     //-----------------------------------------------------------
+    /**
+     * Constante de serialización
+     */
     private static final long serialVersionUID = 1L;
 
-  	@Id
- 	@GeneratedValue
- 	@Field(name="_id")
- 	private String id;
+    //-----------------------------------------------------------
+    // Atributos
+    //-----------------------------------------------------------
+    /**
+     * Identificador del doctor en la BD
+     */
+    @Id
+    @GeneratedValue
+    @Field(name = "_id")
+    private String id;
 
     /**
      * Nombre del doctor
      */
     private String nombre;
     /**
-     * Nombre del doctor
+     * Apellido del doctor
      */
     private String apellido;
     /**
-     * Nombre del doctor
+     * Cédula del doctor
      */
     private int cedula;
     /**
      * Nombre del doctor
      */
-    private ArrayList<Paciente> pacientes;
+    private ArrayList<Integer> cedulaPacientes;
 
     //-----------------------------------------------------------
     // Constructores
     //-----------------------------------------------------------
     /**
-     * Constructor de la clase (sin argumentos)
+     * Constructor de la clase Doctor (sin argumentos)
      */
     public Doctor() {
 
     }
 
     /**
-     * Constructor de la clase (con argumentos)
+     * Constructor de la clase Doctor (con argumentos)
      *
-     * @param nombre
+     * @param pNombre El nombre del doctor
+     * @param pApellido El apellido del doctor
+     * @param pCedula La cédula del doctor
      */
-    public Doctor(String nombre, String apellido, int cedula) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.cedula = cedula;
-        pacientes = new ArrayList<Paciente>();
+    public Doctor(String pNombre, String pApellido, int pCedula) {
+        nombre = pNombre;
+        apellido = pApellido;
+        cedula = pCedula;
+        cedulaPacientes = new ArrayList<Integer>();
     }
 
-    //-----------------------------------------------------------
-    // Getters y setters
-    //-----------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------
+    // Métodos
+    //------------------------------------------------------------------------------------------------------
+    // GETTERS ----------------------------------
     /**
-     * Modifica el nombre de la ciudad
+     * Retorna el nombre del doctor
      *
-     * @param nombre Nuevo nombre de la ciudad
-     */
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-
-    }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
-
-    public void setCedula(int cedula) {
-        this.cedula = cedula;
-    }
-
-    public ArrayList<Episodio> consultarEpisodiosPaciente(int cedula) {
-        for (Paciente paciente : pacientes) {
-            if (paciente.getCedula() == cedula) {
-                return paciente.getEpisodios();
-            }
-        }
-        return new ArrayList<Episodio>();
-    }
-
-    /**
-     * Devuelve el nombre de la ciudad
-     *
-     * @return nombre Nombre de la ciudad
+     * @return El nombre del doctor
      */
     public String getNombre() {
         return nombre;
     }
 
+    /**
+     * Retorna el apellido del doctor
+     *
+     * @return El apellido del doctor
+     */
     public String getApellido() {
         return apellido;
     }
 
+    /**
+     * Retorna la cédula del doctor
+     *
+     * @return La cédula del doctor
+     */
     public int getCedula() {
         return cedula;
     }
 
-    public ArrayList<Paciente> getPacientes() {
-        return pacientes;
+    /**
+     * Retorna la lista de cedulas de los pacientes asociados al doctor
+     *
+     * @return La lista de cédulas de pacientes del doctor
+     */
+    public ArrayList<Integer> getCedulaPacientes() {
+        return cedulaPacientes;
     }
 
-    public void agregarPaciente(Paciente paciente) {
-        pacientes.add(paciente);
+    /**
+     * Retorna el Id del doctor
+     *
+     * @return El Id del doctor
+     */
+    public String getId() {
+        return id;
     }
 
-    public ArrayList<Episodio> consultarEpisodiosPacienteFecha(int cedulaPaciente, String fechainicial, String fechafinal) {
-        if (pacientes == null) {
-            pacientes = new ArrayList<Paciente>();
-        }
-        for (int i = 0; i < pacientes.size(); i++) {
-            if (pacientes.get(i).getCedula() == cedulaPaciente) {
-                return pacientes.get(i).getEpisodios();
+    // SETTERS ----------------------------------
+    /**
+     * Modifica el nombre del doctor
+     *
+     * @param pNombre Nuevo nombre del doctor
+     */
+    public void setNombre(String pNombre) {
+        nombre = pNombre;
+    }
+
+    /**
+     * Modifica el apellido del doctor
+     *
+     * @param pApellido Nuevo apellido del doctor
+     */
+    public void setApellido(String pApellido) {
+        apellido = pApellido;
+    }
+
+    /**
+     * Modifica a cédula del doctor
+     *
+     * @param pCedula Nuevo cédula del doctor
+     */
+    public void setCedula(int pCedula) {
+        cedula = pCedula;
+    }
+
+    /**
+     * Modifica a id del doctor
+     *
+     * @param pId Nuevo id del doctor
+     */
+    public void setId(String pId) {
+        id = pId;
+    }
+
+    /**
+     * Modifica las cédulas asociadas al doctor
+     *
+     * @param pCedulaPacientes Lista de pacientes a agregar
+     */
+    public void setCedulaPacientes(ArrayList<Integer> pCedulaPacientes) {
+        cedulaPacientes = pCedulaPacientes;
+    }
+
+    // ADDER ----------------------------------
+    /**
+     * Método que agrega un paciente
+     *
+     * @param cedulaPaciente La cédula del paciente a agregar
+     */
+    public void agregarPaciente(int cedulaPaciente) {
+        cedulaPacientes.add(cedulaPaciente);
+    }
+
+    // ASKER ----------------------------------
+    
+    /**
+     * Método que responde si el paciente pasado por parámetro pertenece al doctor
+     * @param pCedula La cédula del paciente solicitado
+     * @return True si el paciente es atendido por el doctor. False de los contrario.
+     */
+    public boolean contienePaciente(int pCedula) {
+        for (Integer cedulaPaciente : cedulaPacientes) {
+            if (cedulaPaciente == pCedula) {
+                return true;
             }
         }
-        return new ArrayList<Episodio>();
-
-    }
-
-    public Episodio consultarEpisodioPacienteFecha(int cedulaPaciente, String fecha) {
-        if (pacientes == null) {
-            pacientes = new ArrayList<Paciente>();
-        }
-        for (int i = 0; i < pacientes.size(); i++) {
-            if (pacientes.get(i).getCedula() == cedulaPaciente) {
-                return pacientes.get(i).getEpisodio(fecha);
-            }
-        }
-        return new Episodio();
+        return false;
     }
 
 }
