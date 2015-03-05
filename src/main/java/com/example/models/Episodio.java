@@ -7,28 +7,30 @@ package com.example.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.eclipse.persistence.nosql.annotations.DataFormatType;
-import org.eclipse.persistence.nosql.annotations.Field;
-import org.eclipse.persistence.nosql.annotations.NoSql;
 
 /**
  * Clase Episodio
  *
  * @author estudiante
  */
-@NoSql(dataFormat = DataFormatType.MAPPED)
 @Entity
-@XmlRootElement
 public class Episodio implements Serializable {
 
     @Id
-    @GeneratedValue
-    @Field(name = "_id")
-    private String id;
+    @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     //------------------------------------------------------------------------------------------------------
     // Atributos
     //------------------------------------------------------------------------------------------------------
@@ -61,17 +63,17 @@ public class Episodio implements Serializable {
     /**
      * Lista de medicamentos tomados para el episodio
      */
-    private ArrayList<String> medicamentos;
+    private List<String> medicamentos;
 
     /**
      * Alimentos consumidos antes del episodio
      */
-    private ArrayList<String> alimentos;
+    private List<String> alimentos;
 
     /**
      * Bebidas consumidas antes del episodio
      */
-    private ArrayList<String> bebidas;
+    private List<String> bebidas;
 
     /**
      * Cédula del paciente que registra el evento
@@ -107,7 +109,7 @@ public class Episodio implements Serializable {
      * @param pAlimentos Alimentos consumidos antes del episodio.
      * @param pBebidas Bebidas consumidas antes del episodio.
      */
-    public Episodio(int pCedula, String dia, String mes, String anhio, String hora, String minuto, double pNivelDolor, String pLocalizacion, double pIntensidad, double pNivelAlivio, ArrayList<String> pMedicamentos, ArrayList<String> pAlimentos, ArrayList<String> pBebidas) {
+    public Episodio(int pCedula, String dia, String mes, String anhio, String hora, String minuto, double pNivelDolor, String pLocalizacion, double pIntensidad, double pNivelAlivio, List<String> pMedicamentos, List<String> pAlimentos, List<String> pBebidas) {
 
         cedula = pCedula;
         fecha = anhio + mes + dia + hora + minuto;
@@ -140,7 +142,7 @@ public class Episodio implements Serializable {
      * Retorna el Id del episodio
      * @return El Id
      */
-    public String getId(){
+    public long getId(){
         return id;
     }
 
@@ -185,7 +187,7 @@ public class Episodio implements Serializable {
      *
      * @return La lista de medicamentos
      */
-    public ArrayList<String> getMedicamentos() {
+    public List<String> getMedicamentos() {
         if (medicamentos == null) {
             medicamentos = new ArrayList<String>();
         }
@@ -197,7 +199,7 @@ public class Episodio implements Serializable {
      *
      * @return La lista de alimentos
      */
-    public ArrayList<String> getAlimentos() {
+    public List<String> getAlimentos() {
         return alimentos;
     }
 
@@ -206,7 +208,7 @@ public class Episodio implements Serializable {
      *
      * @return La lista de bebidas
      */
-    public ArrayList<String> getBebidas() {
+    public List<String> getBebidas() {
         return bebidas;
     }
 
@@ -234,7 +236,7 @@ public class Episodio implements Serializable {
      * Modifica el Id del episodio
      * @param pId El nuevo Id
      */
-    public void setId(String pId){
+    public void setId(long pId){
         id = pId;
     }
 
@@ -279,7 +281,7 @@ public class Episodio implements Serializable {
      *
      * @param pMedicamentos La lista de medicamentos
      */
-    public void setMedicamentos(ArrayList<String> pMedicamentos) {
+    public void setMedicamentos(List<String> pMedicamentos) {
         medicamentos = pMedicamentos;
     }
 
@@ -288,7 +290,7 @@ public class Episodio implements Serializable {
      *
      * @param pAlimentos La lista de alimentos
      */
-    public void setAlimentos(ArrayList<String> pAlimentos) {
+    public void setAlimentos(List<String> pAlimentos) {
         alimentos = pAlimentos;
     }
 
@@ -297,7 +299,7 @@ public class Episodio implements Serializable {
      *
      * @param pBebidas La lista de bebidas
      */
-    public void setBebidas(ArrayList<String> pBebidas) {
+    public void setBebidas(List<String> pBebidas) {
         bebidas = pBebidas;
     }
 

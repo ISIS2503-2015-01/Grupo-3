@@ -3,22 +3,18 @@ package com.example.models;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.eclipse.persistence.nosql.annotations.DataFormatType;
-import org.eclipse.persistence.nosql.annotations.Field;
-import org.eclipse.persistence.nosql.annotations.NoSql;
 
 /**
  *
  * @author Mauricio
  */
-@NoSql(dataFormat = DataFormatType.MAPPED)
 @Entity
-@XmlRootElement
 public class Doctor implements Serializable {
 
     //-----------------------------------------------------------
@@ -36,9 +32,9 @@ public class Doctor implements Serializable {
      * Identificador del doctor en la BD
      */
     @Id
-    @GeneratedValue
-    @Field(name = "_id")
-    private String id;
+    @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     /**
      * Nombre del doctor
@@ -126,7 +122,7 @@ public class Doctor implements Serializable {
      *
      * @return El Id del doctor
      */
-    public String getId() {
+    public long getId() {
         return id;
     }
 
@@ -163,7 +159,7 @@ public class Doctor implements Serializable {
      *
      * @param pId Nuevo id del doctor
      */
-    public void setId(String pId) {
+    public void setId(long pId) {
         id = pId;
     }
 

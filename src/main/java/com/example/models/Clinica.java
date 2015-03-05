@@ -8,22 +8,23 @@ package com.example.models;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.eclipse.persistence.nosql.annotations.DataFormatType;
-import org.eclipse.persistence.nosql.annotations.Field;
-import org.eclipse.persistence.nosql.annotations.NoSql;
 
-@NoSql(dataFormat = DataFormatType.MAPPED)
-@Entity
-@XmlRootElement
 /**
  * Clase Clínica
  *
  * @author estudiante
  */
+@Entity
 public class Clinica implements Serializable {
 
     //-----------------------------------------------------------
@@ -41,19 +42,22 @@ public class Clinica implements Serializable {
      * Identificador del doctor en la BD
      */
     @Id
-    @GeneratedValue
-    @Field(name = "_id")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     /**
      * Lista de doctores asociados a la clínica
      */
-    private ArrayList<Doctor> doctores;
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id")
+    private List<Doctor> doctores;
 
     /**
      * Lista de pacientes de la clínica
      */
-    private ArrayList<Paciente> pacientes;
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id")
+    private List<Paciente> pacientes;
 
     /**
      * Instancia de la clase
@@ -80,7 +84,7 @@ public class Clinica implements Serializable {
      *
      * @return La lista de pacientes
      */
-    public ArrayList<Paciente> getPacientes() {
+    public List<Paciente> getPacientes() {
         return pacientes;
     }
 
@@ -89,7 +93,7 @@ public class Clinica implements Serializable {
      *
      * @return La lista de doctores
      */
-    public ArrayList<Doctor> getDoctores() {
+    public List<Doctor> getDoctores() {
         return doctores;
     }
 
@@ -98,7 +102,7 @@ public class Clinica implements Serializable {
      *
      * @return El id de la clínica
      */
-    public String getId() {
+    public long getId() {
         return id;
     }
 
@@ -116,7 +120,7 @@ public class Clinica implements Serializable {
      *
      * @param nDoctores La lista de doctores
      */
-    public void setDoctor(ArrayList<Doctor> nDoctores) {
+    public void setDoctor(List<Doctor> nDoctores) {
         doctores = nDoctores;
     }
 
@@ -125,7 +129,7 @@ public class Clinica implements Serializable {
      *
      * @param nPacientes La lista de pacientes
      */
-    public void setPacientes(ArrayList<Paciente> nPacientes) {
+    public void setPacientes(List<Paciente> nPacientes) {
         pacientes = nPacientes;
     }
 
@@ -134,7 +138,7 @@ public class Clinica implements Serializable {
      *
      * @param pId Nuevo id de la clínica
      */
-    public void setId(String pId) {
+    public void setId(long pId) {
         id = pId;
     }
 
@@ -214,72 +218,78 @@ public class Clinica implements Serializable {
      * @param cedulaDoctor La cédula del doctor que atiende al paciente
      * @return La lista de episodios del paciente solicitadoo
      */
-    public ArrayList<Episodio> conslutarEpisodiosDoctor(int cedulaPaciente, int cedulaDoctor) {
+    public List<Episodio> conslutarEpisodiosDoctor(int cedulaPaciente, int cedulaDoctor) {
         // TODO revisar si doctores tiene asociado el paciente
         Paciente paciente = buscarPaciente(cedulaPaciente);
         return paciente.getEpisodios();
     }
-    
+
     /**
      * Retorna el episodio con el id
+     *
      * @param id El identificador del episodio
      * @param cedulaPaciente La cédula del paciente solicitado
      * @param cedulaDoctor La cédula del doctor que atiende al paciente
-     * @return 
+     * @return
      */
-    public Episodio conslutarEpisodioDoctor(String id, int cedulaPaciente, int cedulaDoctor) {
+    public Episodio conslutarEpisodioDoctor(long id, int cedulaPaciente, int cedulaDoctor) {
         // TODO revisar si doctores tiene asociado el paciente
         Paciente paciente = buscarPaciente(cedulaPaciente);
         return paciente.getEpisodio(id);
     }
- 
+
     /**
-     * Retorna una lista con los episodios cuya fecha coincide con los parámetros dados
+     * Retorna una lista con los episodios cuya fecha coincide con los
+     * parámetros dados
+     *
      * @param cedulaPaciente La cédula del paciente solicitado
      * @param cedulaDoctor La cédula del doctor que atiende al paciente
      * @param fechaInicial Fecha inicial del intervalo a buscar
      * @param fechaFinal Fecha final del intervalo a buscar
      * @return Lista con los episodios resultantes
      */
-    public ArrayList<Episodio> conslutarEpisodiosDoctor(int cedulaPaciente, int cedulaDoctor, String fechaInicial, String fechaFinal) {
+    public List<Episodio> conslutarEpisodiosDoctor(int cedulaPaciente, int cedulaDoctor, String fechaInicial, String fechaFinal) {
         // TODO revisar si doctores tiene asociado el paciente
         Paciente paciente = buscarPaciente(cedulaPaciente);
         return paciente.getEpisodiosFechas(fechaInicial, fechaFinal);
     }
-    
+
     /**
      * Retorna todos los episodios del paciente con cédula dada
      *
      * @param cedulaPaciente La cédula del paciente solicitado
      * @return La lista de episodios del paciente solicitadoo
      */
-    public ArrayList<Episodio> conslutarEpisodiosPaciente(int cedulaPaciente) {
+    public List<Episodio> conslutarEpisodiosPaciente(int cedulaPaciente) {
         // TODO revisar si doctores tiene asociado el paciente
         Paciente paciente = buscarPaciente(cedulaPaciente);
         return paciente.getEpisodios();
     }
-    
+
     /**
      * Retorna el episodio con el id
+     *
      * @param id El identificador del episodio
      * @param cedulaPaciente La cédula del paciente solicitado
-     * @return 
+     * @return
      */
-    public Episodio conslutarEpisodioPaciente(String id, int cedulaPaciente) {
+    public Episodio conslutarEpisodioPaciente(long id, int cedulaPaciente) {
         // TODO revisar si doctores tiene asociado el paciente
         Paciente paciente = buscarPaciente(cedulaPaciente);
         return paciente.getEpisodio(id);
     }
- 
+
     /**
-     * Retorna una lista con los episodios cuya fecha coincide con los parámetros dados
+     * Retorna una lista con los episodios cuya fecha coincide con los
+     * parámetros dados
+     *
      * @param cedulaPaciente La cédula del paciente solicitado
      * @param cedulaDoctor La cédula del doctor que atiende al paciente
      * @param fechaInicial Fecha inicial del intervalo a buscar
      * @param fechaFinal Fecha final del intervalo a buscar
      * @return Lista con los episodios resultantes
      */
-    public ArrayList<Episodio> conslutarEpisodiosPaciente(int cedulaPaciente, String fechaInicial, String fechaFinal) {
+    public List<Episodio> conslutarEpisodiosPaciente(int cedulaPaciente, String fechaInicial, String fechaFinal) {
         // TODO revisar si doctores tiene asociado el paciente
         Paciente paciente = buscarPaciente(cedulaPaciente);
         return paciente.getEpisodiosFechas(fechaInicial, fechaFinal);

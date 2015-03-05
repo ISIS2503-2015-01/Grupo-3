@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
+import static javax.persistence.CascadeType.ALL;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,18 +21,14 @@ import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.eclipse.persistence.nosql.annotations.DataFormatType;
-import org.eclipse.persistence.nosql.annotations.Field;
-import org.eclipse.persistence.nosql.annotations.NoSql;
+import org.eclipse.persistence.annotations.PrimaryKey;
 
 /**
  * Clase Paciente
  *
  * @author estudiante
  */
-@NoSql(dataFormat = DataFormatType.MAPPED)
 @Entity
-@XmlRootElement
 public class Paciente implements Serializable {
 
     //-----------------------------------------------------------
@@ -40,9 +37,9 @@ public class Paciente implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
-    @Field(name = "_id")
-    private String id;
+    @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @NotNull
     @Column(name = "create_at", updatable = false)
@@ -68,11 +65,13 @@ public class Paciente implements Serializable {
      * Cédula del paciente
      */
     private int cedula;
-
+    
     /**
      * Lista de episodios
      */
-    private ArrayList<Episodio> episodios;
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id")
+    private List<Episodio> episodios;
 
     //-----------------------------------------------------------
     // Constructores
@@ -134,7 +133,7 @@ public class Paciente implements Serializable {
      *
      * @return La lista de episodios
      */
-    public ArrayList<Episodio> getEpisodios() {
+    public List<Episodio> getEpisodios() {
         if (episodios == null) {
             episodios = new ArrayList<Episodio>();
         }
@@ -148,9 +147,9 @@ public class Paciente implements Serializable {
      * @return El episodio con el Id especificado. Si no lo encuentra retorna
      * null.
      */
-    public Episodio getEpisodio(String pId) {
+    public Episodio getEpisodio(long pId) {
         for (Episodio episodio : episodios) {
-            if (episodio.getId().equals(pId)) {
+            if (episodio.getId() == (pId)) {
                 return episodio;
             }
         }
@@ -165,8 +164,8 @@ public class Paciente implements Serializable {
      * @param fechafinal La fecha final buscada
      * @return Lista con los epiodios cuya fecha coincide con los parámetros.
      */
-    public ArrayList<Episodio> getEpisodiosFechas(String fechainicial, String fechafinal) {
-        ArrayList<Episodio> episodiosFecha = new ArrayList<Episodio>();
+    public List<Episodio> getEpisodiosFechas(String fechainicial, String fechafinal) {
+        List<Episodio> episodiosFecha = new ArrayList<Episodio>();
         for (Episodio epis : episodios) {
             if (epis.getFecha().compareTo(fechainicial) >= 0 || epis.getFecha().compareTo(fechafinal) <= 0) {
                 episodiosFecha.add(epis);

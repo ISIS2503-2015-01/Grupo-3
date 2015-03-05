@@ -34,7 +34,7 @@ import org.json.simple.parser.JSONParser;
 @Produces(MediaType.APPLICATION_JSON)
 public class PacienteService {
 
-    @PersistenceContext(unitName = "mongoPU")
+    @PersistenceContext(unitName = "arquiPU")
     EntityManager entityManager;
 
     static private Clinica clinica = Clinica.darInstancia();
@@ -55,7 +55,22 @@ public class PacienteService {
         for (Paciente pacient : pac) {
             clinica.addPaciente(pacient);
             System.out.println(clinica.getPacientes().size());
+            try {
+                entityManager.getTransaction().begin();
+                entityManager.persist(pacient);
+                entityManager.getTransaction().commit();
+                entityManager.refresh(pacient);
+            } catch (Throwable t) {
+                t.printStackTrace();
+                if (entityManager.getTransaction().isActive()) {
+                    entityManager.getTransaction().rollback();
+                }
+            } finally {
+                entityManager.clear();
+                entityManager.close();
+            }
         }
+
         return pac;
     }
 
@@ -63,11 +78,19 @@ public class PacienteService {
     @Path("/agregarEpisodio")
     public List<Episodio> agregarEpisodio(List<Episodio> pEpisodios) {
         for (Episodio nEpisodio : pEpisodios) {
-            Paciente p = clinica.buscarPaciente(nEpisodio.getCedula());
-            if (p != null) {
-                p.addEpisodio(nEpisodio);
-            } else {
-                System.out.println("fail");
+             try {
+                entityManager.getTransaction().begin();
+                entityManager.persist(nEpisodio);
+                entityManager.getTransaction().commit();
+                entityManager.refresh(nEpisodio);
+            } catch (Throwable t) {
+                t.printStackTrace();
+                if (entityManager.getTransaction().isActive()) {
+                    entityManager.getTransaction().rollback();
+                }
+            } finally {
+                entityManager.clear();
+                entityManager.close();
             }
         }
         return pEpisodios;
@@ -75,7 +98,7 @@ public class PacienteService {
 
     @GET
     @Path("/obtenerEpisodios/{cedula}/{fechaInicial}/{fechaFinal}")
-    public ArrayList<Episodio> verEpisodioFecha(@PathParam("cedula") String cedula, @PathParam("fechaInicial") String fechaInicial, @PathParam("fechaFinal") String fechaFinal) {//int ced, String fechainicial, String fechafinal) 
+    public List<Episodio> verEpisodioFecha(@PathParam("cedula") String cedula, @PathParam("fechaInicial") String fechaInicial, @PathParam("fechaFinal") String fechaFinal) {//int ced, String fechainicial, String fechafinal) 
         try {
             Paciente pacient = clinica.buscarPaciente(Integer.parseInt(cedula));
             if (pacient != null) {
@@ -92,7 +115,7 @@ public class PacienteService {
 
     @GET
     @Path("/obtenerEpisodios/{cedula}/{id}")
-    public Episodio verEpisodioFecha(@PathParam("cedula") String cedula, @PathParam("id") String id) {
+    public Episodio verEpisodioFecha(@PathParam("cedula") String cedula, @PathParam("id") long id) {
         try {
             Paciente pacient = clinica.buscarPaciente(Integer.parseInt(cedula));
             if (null == pacient) {
@@ -109,7 +132,7 @@ public class PacienteService {
 
     @GET
     @Path("/obtenerEpisodios/{cedula}")
-    public ArrayList<Episodio> verEpisodioFecha(@PathParam("cedula") String cedula) {
+    public List<Episodio> verEpisodioFecha(@PathParam("cedula") String cedula) {
         try {
             Paciente pacient = clinica.buscarPaciente(Integer.parseInt(cedula));
             if (null == pacient) {
