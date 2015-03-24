@@ -18,7 +18,7 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) throws Exception{
-        Clinica clinica = Clinica.darInstancia();
+   /**     Clinica clinica = Clinica.darInstancia();
 
         Episodio ep1 = new Episodio(01, "01", "01", "2010", "13", "12", 12, "Frente", 2, 2, null, null, null);
         clinica.addPaciente(new Paciente("Paciente1", "ApellidoPaciente1", 01));
@@ -43,7 +43,7 @@ public class Main {
 
         clinica.addDoctor(new Doctor("Doctor3", "Apellido3", 13));
         clinica.buscarDoctor(13).addPaciente(pac3.getCedula());
-        
+     */   
         String webappDirLocation = "src/main/webapp/";
 
         // The port that we should run on can be set into an environment variable

@@ -3,11 +3,13 @@ package com.example.models;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -51,7 +53,10 @@ public class Doctor implements Serializable {
     /**
      * Nombre del doctor
      */
-    private ArrayList<Integer> cedulaPacientes;
+    @OneToMany
+    private List<Paciente> pacientes;
+    
+    private String password;
 
     //-----------------------------------------------------------
     // Constructores
@@ -70,11 +75,12 @@ public class Doctor implements Serializable {
      * @param pApellido El apellido del doctor
      * @param pCedula La cédula del doctor
      */
-    public Doctor(String pNombre, String pApellido, int pCedula) {
+    public Doctor(String pNombre, String pApellido, int pCedula, String pass) {
         nombre = pNombre;
         apellido = pApellido;
         cedula = pCedula;
-        cedulaPacientes = new ArrayList<Integer>();
+        pacientes = new ArrayList<Paciente>();
+        password = pass;
     }
 
     //------------------------------------------------------------------------------------------------------
@@ -90,6 +96,9 @@ public class Doctor implements Serializable {
         return nombre;
     }
 
+    public String getPassword() {
+        return password;
+    }
     /**
      * Retorna el apellido del doctor
      *
@@ -113,8 +122,8 @@ public class Doctor implements Serializable {
      *
      * @return La lista de cédulas de pacientes del doctor
      */
-    public ArrayList<Integer> getCedulaPacientes() {
-        return cedulaPacientes;
+    public List<Paciente> getCedulaPacientes() {
+        return pacientes;
     }
 
     /**
@@ -144,7 +153,11 @@ public class Doctor implements Serializable {
     public void setApellido(String pApellido) {
         apellido = pApellido;
     }
-
+    
+     public void setPassword(String pApellido) {
+        password = pApellido;
+    }
+    
     /**
      * Modifica a cédula del doctor
      *
@@ -168,8 +181,8 @@ public class Doctor implements Serializable {
      *
      * @param pCedulaPacientes Lista de pacientes a agregar
      */
-    public void setCedulaPacientes(ArrayList<Integer> pCedulaPacientes) {
-        cedulaPacientes = pCedulaPacientes;
+    public void setCedulaPacientes(List<Paciente> pCedulaPacientes) {
+        pacientes = pCedulaPacientes;
     }
 
     // ADDER ----------------------------------
@@ -178,8 +191,8 @@ public class Doctor implements Serializable {
      *
      * @param cedulaPaciente La cédula del paciente a agregar
      */
-    public void addPaciente(int cedulaPaciente) {
-        cedulaPacientes.add(cedulaPaciente);
+    public void addPaciente(Paciente cedulaPaciente) {
+        pacientes.add(cedulaPaciente);
     }
 
     // ASKER ----------------------------------
@@ -189,9 +202,11 @@ public class Doctor implements Serializable {
      * @param pCedula La cédula del paciente solicitado
      * @return True si el paciente es atendido por el doctor. False de los contrario.
      */
-    public boolean contienePaciente(int pCedula) {
-        for (Integer cedulaPaciente : cedulaPacientes) {
-            if (cedulaPaciente == pCedula) {
+    public boolean contienePaciente(Paciente paciente) {
+        for (int i =0; i<pacientes.size();i++)
+        {
+            if(paciente == pacientes.get(i))
+            {
                 return true;
             }
         }

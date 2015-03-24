@@ -14,6 +14,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -145,5 +146,14 @@ public class PacienteService {
         } catch (Exception e) {
             return new ArrayList<Episodio>();
         }
+    }
+    @GET
+    @Path("/obtenerCatalizadores/{cedula}")
+    public List<String> verCatalizadores(@PathParam("cedulaPaciente") int cedulaPaciente)
+    {
+          TypedQuery<String> query = (TypedQuery<String>) entityManager.createQuery("SELECT e.alimentos, e.bebidas,e.medicamentos FROM EPISODIO e,  PACIENTE p WHERE p.cedula = :cedulaPaciente AND p.id = e.id ");
+		query.setParameter("cedulaPaciente",cedulaPaciente);
+                List<String> s= query.getResultList();
+                return s;
     }
 }

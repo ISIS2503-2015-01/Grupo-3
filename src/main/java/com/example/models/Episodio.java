@@ -302,7 +302,9 @@ public class Episodio implements Serializable {
     public void setBebidas(List<String> pBebidas) {
         bebidas = pBebidas;
     }
-
+    public void setCedula(int pBebidas) {
+        cedula = pBebidas;
+    }
     // REFACTOR -----------------------------------
     /**
      * Inicializa los arreglos si son nulos

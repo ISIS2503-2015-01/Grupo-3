@@ -103,5 +103,6 @@ public class DoctorService {
         Episodio episodios = (Episodio) query.getResultList();
           return episodios;
     }
-
+    
 }
+        

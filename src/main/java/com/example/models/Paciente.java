@@ -69,8 +69,7 @@ public class Paciente implements Serializable {
     /**
      * Lista de episodios
      */
-    @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "id")
+    @OneToMany
     private List<Episodio> episodios;
 
     //-----------------------------------------------------------
