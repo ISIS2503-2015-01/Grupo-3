@@ -5,24 +5,21 @@
  */
 package com.example.services;
 
-import com.example.models.Clinica;
+import com.example.PersistenceManager;
 import com.example.models.Doctor;
 import com.example.models.Episodio;
 import com.example.models.Paciente;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -37,20 +34,24 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 public class DoctorService {
 
-    @PersistenceContext(unitName = "arquiPU")
+    @PersistenceContext(unitName = "mongoPU")
     EntityManager entityManager;
-    
-    private Clinica clinica;
 
-    public DoctorService() {
-        clinica = Clinica.darInstancia();
+    //static private Clinica clinica = Clinica.darInstancia();
+    @PostConstruct
+    public void init() {
+        try {
+            entityManager = PersistenceManager.getInstance().getEntityManagerFactory().createEntityManager();
+        } catch (Exception e) {
+            System.out.println("------------------------------------------------------------------------------------------------------------------");
+            e.printStackTrace();
+        }
     }
 
     @POST
     @Path("/agregarDoctor")
     public List<Doctor> crearDoctor(List<Doctor> doctores) {
         for (Doctor doctor : doctores) {
-            clinica.addDoctor(doctor);
             try {
                 entityManager.getTransaction().begin();
                 entityManager.persist(doctor);
@@ -69,40 +70,71 @@ public class DoctorService {
         return doctores;
     }
 
-    @GET
-    @Path("/consultarEpisodiosPaciente/{cedulaPaciente}/{cedulaDoctor}")
-    public List<Episodio> conslutarEpisodiosDoctor(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor) {
-        
-        TypedQuery<Episodio> query = (TypedQuery<Episodio>) entityManager.createQuery("SELECT e.alimentos, e.bebidas,e.cedula FROM EPISODIO e, DOCTOR d, PACIENTE p WHERE d.cedula = :cedulaDoctor AND p.cedula = :cedulaDoctor ");
-		query.setParameter("cedulaPaciente",cedulaPaciente);
-                query.setParameter("cedulaDoctor",cedulaDoctor);
-        List<Episodio> episodios =query.getResultList();
-          return episodios;
-               
+    @PUT
+    @Path("/agregarPaciente/{cedulaDoctor}/{cedulaPaciente}")
+    public List<Paciente> crearDoctor(@PathParam("cedulaDoctor") int cedulaDoctor, @PathParam("cedulaPaciente") int cedulaPaciente) {
+        TypedQuery<Doctor> doctor = (TypedQuery<Doctor>) entityManager.createQuery("SELECT c FROM Doctor c WHERE c.cedula = :cedulaDoctor");
+        List<Doctor> doctores = doctor.setParameter("cedulaDoctor", cedulaDoctor).getResultList();
+
+        TypedQuery<Paciente> paciente = (TypedQuery<Paciente>) entityManager.createQuery("SELECT c FROM Paciente c WHERE c.cedula = :cedulaPaciente");
+        List<Paciente> pacientes = paciente.setParameter("cedulaPaciente", cedulaPaciente).getResultList();
+
+        if (!doctores.isEmpty() && !pacientes.isEmpty()) {
+            try {
+                entityManager.getTransaction().begin();
+                Paciente p = pacientes.get(0);
+                Doctor d = doctores.get(0);
+                p.setCedulaDoctor(cedulaDoctor);
+                d.addPaciente(cedulaPaciente);
+                entityManager.getTransaction().commit();
+            } catch (Throwable t) {
+                t.printStackTrace();
+                if (entityManager.getTransaction().isActive()) {
+                    entityManager.getTransaction().rollback();
+                }
+            } finally {
+                entityManager.clear();
+                entityManager.close();
+            }
+            return pacientes;
+        }
+        return new ArrayList<Paciente>();
     }
 
     @GET
-    @Path("/consultarEpisodiosPaciente/{cedulaPaciente}/{cedulaDoctor}/{fechaInicial}/{fechaFinal}")
+    @Path("/consultarEpisodiosPaciente/{cedulaDoctor}/{cedulaPaciente}")
+    public List<Episodio> conslutarEpisodiosDoctor(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor) {
+        // Falta revisar si el paciente es parte es atendido por el doctor actual
+        
+        TypedQuery<Episodio> query = (TypedQuery<Episodio>) entityManager.createQuery("SELECT c FROM Episodio c WHERE c.cedula = :cedulaPaciente");
+        List<Episodio> episodios = query.setParameter("cedulaPaciente", cedulaPaciente).getResultList();
+
+        return episodios; 
+    }
+
+    @GET
+    @Path("/consultarEpisodiosPaciente/{cedulaDoctor}/{cedulaPaciente}/{fechaInicial}/{fechaFinal}")
     public List<Episodio> conslutarEpisodiosDoctor(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor, @PathParam("fechaInicial") String fechaInicial, @PathParam("fechaFinal") String fechaFinal) {
-       TypedQuery<Episodio> query = (TypedQuery<Episodio>) entityManager.createQuery("SELECT e.alimentos, e.bebidas,e.cedula FROM EPISODIO e, DOCTOR d, PACIENTE p WHERE e.fecha BETWEEN :fechaInicial AND :fechaFinal AND d.cedula = :cedulaDoctor AND p.cedula = :cedulaDoctor ");
-		query.setParameter("cedulaPaciente",cedulaPaciente);
-                query.setParameter("fechaInicial",fechaInicial);
-                query.setParameter("cedulaDoctor",cedulaDoctor);
-                 query.setParameter("fechaFinal",fechaFinal);
+        // Falta revisar si el paciente es parte es atendido por el doctor actual
+        
+        TypedQuery<Episodio> query = (TypedQuery<Episodio>) entityManager.createQuery("SELECT c FROM Episodio c WHERE c.cedula = :cedulaPaciente AND c.fecha >= :fechaInicial AND c.fecha <= :fechaFinal");
+        query.setParameter("cedulaPaciente", cedulaPaciente);
+        query.setParameter("fechaInicial", fechaInicial);
+        query.setParameter("fechaFinal", fechaFinal);
         List<Episodio> episodios =query.getResultList();
-          return episodios;
+                
+        return episodios;
     }
 
     @GET
     @Path("/consultarEpisodiosPaciente/{cedulaPaciente}/{cedulaDoctor}/{id}")
-    public Episodio consultarEpisodio(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor, @PathParam("id") long id) {
-        TypedQuery<Episodio> query = (TypedQuery<Episodio>) entityManager.createQuery("SELECT e.alimentos, e.bebidas,e.cedula FROM EPISODIO e, DOCTOR d, PACIENTE p WHERE e.id = :id AND d.cedula = :cedulaDoctor AND p.cedula = :cedulaDoctor ");
-		query.setParameter("cedulaPaciente",cedulaPaciente);
-                query.setParameter("cedulaDoctor",cedulaDoctor);
-                query.setParameter("id",id);
-        Episodio episodios = (Episodio) query.getResultList();
-          return episodios;
-    }
-    
-}
+    public List<Episodio> consultarEpisodio(@PathParam("cedulaPaciente") int cedulaPaciente, @PathParam("cedulaDoctor") int cedulaDoctor, @PathParam("id") String id) {
+        // Falta revisar si el paciente es parte es atendido por el doctor actual
         
+        TypedQuery<Episodio> query = (TypedQuery<Episodio>) entityManager.createQuery("SELECT c FROM Episodio c WHERE c.id = :nId");
+        List<Episodio> episodios = query.setParameter("nId", cedulaPaciente).getResultList();
+
+        return episodios;
+    }
+
+}

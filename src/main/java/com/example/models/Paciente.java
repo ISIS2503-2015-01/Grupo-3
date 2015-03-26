@@ -13,7 +13,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
-import static javax.persistence.CascadeType.ALL;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,14 +20,18 @@ import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.eclipse.persistence.annotations.PrimaryKey;
+import org.eclipse.persistence.nosql.annotations.DataFormatType;
+import org.eclipse.persistence.nosql.annotations.Field;
+import org.eclipse.persistence.nosql.annotations.NoSql;
 
 /**
  * Clase Paciente
  *
  * @author estudiante
  */
+@NoSql(dataFormat = DataFormatType.MAPPED)
 @Entity
+@XmlRootElement
 public class Paciente implements Serializable {
 
     //-----------------------------------------------------------
@@ -37,9 +40,9 @@ public class Paciente implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name="id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue
+    @Field(name = "_id")
+    private String id;
 
     @NotNull
     @Column(name = "create_at", updatable = false)
@@ -65,12 +68,18 @@ public class Paciente implements Serializable {
      * Cédula del paciente
      */
     private int cedula;
-    
+
     /**
      * Lista de episodios
      */
+    //@OneToMany(mappedBy="paciente")
     @OneToMany
     private List<Episodio> episodios;
+    
+    /**
+     * Cédula del doctor que atiende al paciente
+     */
+    private int cedulaDoctor;
 
     //-----------------------------------------------------------
     // Constructores
@@ -126,6 +135,15 @@ public class Paciente implements Serializable {
     public int getCedula() {
         return cedula;
     }
+    
+    /**
+     * Retorna la cédula del doctor que atiende al paciente
+     *
+     * @return La cédula del doctor
+     */
+    public int getCedulaDoctor() {
+        return cedulaDoctor;
+    }
 
     /**
      * Retorna la lista de episodios
@@ -146,9 +164,9 @@ public class Paciente implements Serializable {
      * @return El episodio con el Id especificado. Si no lo encuentra retorna
      * null.
      */
-    public Episodio getEpisodio(long pId) {
+    public Episodio getEpisodio(String pId) {
         for (Episodio episodio : episodios) {
-            if (episodio.getId() == (pId)) {
+            if (episodio.getId().equals(pId)) {
                 return episodio;
             }
         }
@@ -163,8 +181,8 @@ public class Paciente implements Serializable {
      * @param fechafinal La fecha final buscada
      * @return Lista con los epiodios cuya fecha coincide con los parámetros.
      */
-    public List<Episodio> getEpisodiosFechas(String fechainicial, String fechafinal) {
-        List<Episodio> episodiosFecha = new ArrayList<Episodio>();
+    public ArrayList<Episodio> getEpisodiosFechas(String fechainicial, String fechafinal) {
+        ArrayList<Episodio> episodiosFecha = new ArrayList<Episodio>();
         for (Episodio epis : episodios) {
             if (epis.getFecha().compareTo(fechainicial) >= 0 || epis.getFecha().compareTo(fechafinal) <= 0) {
                 episodiosFecha.add(epis);
@@ -200,6 +218,15 @@ public class Paciente implements Serializable {
      */
     public void setCedula(int pCedula) {
         cedula = pCedula;
+    }
+    
+    /**
+     * Madifica la cédula del doctor que atiende al paciente
+     *
+     * @param pCedulaDoctor  La cédula del doctor
+     */
+    public void setCedulaDoctor(int pCedulaDoctor) {
+        cedulaDoctor = pCedulaDoctor;
     }
 
     /**

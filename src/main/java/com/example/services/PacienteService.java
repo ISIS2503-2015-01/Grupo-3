@@ -6,14 +6,13 @@
 package com.example.services;
 
 import com.example.PersistenceManager;
-import com.example.models.Clinica;
 import com.example.models.Episodio;
 import com.example.models.Paciente;
-import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -22,9 +21,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 /**
  *
@@ -35,10 +31,10 @@ import org.json.simple.parser.JSONParser;
 @Produces(MediaType.APPLICATION_JSON)
 public class PacienteService {
 
-    @PersistenceContext(unitName = "arquiPU")
+    @PersistenceContext(unitName = "mongoPU")
     EntityManager entityManager;
 
-    static private Clinica clinica = Clinica.darInstancia();
+    //static private Clinica clinica = Clinica.darInstancia();
 
     @PostConstruct
     public void init() {
@@ -54,8 +50,6 @@ public class PacienteService {
     @Path("/agregarPaciente")
     public List<Paciente> agregarPacientes(List<Paciente> pac) {
         for (Paciente pacient : pac) {
-            clinica.addPaciente(pacient);
-            System.out.println(clinica.getPacientes().size());
             try {
                 entityManager.getTransaction().begin();
                 entityManager.persist(pacient);
@@ -79,7 +73,9 @@ public class PacienteService {
     @Path("/agregarEpisodio")
     public List<Episodio> agregarEpisodio(List<Episodio> pEpisodios) {
         for (Episodio nEpisodio : pEpisodios) {
-             try {
+            //TypedQuery<Episodio> query = (TypedQuery<Episodio>) entityManager.createQuery("SELECT c FROM Episodio c WHERE c.cedula = :nCedula ORDER BY C.fecha");
+            //List<Episodio> episodios =query.setParameter("nCedula", cedula).getResultList();
+            try {
                 entityManager.getTransaction().begin();
                 entityManager.persist(nEpisodio);
                 entityManager.getTransaction().commit();
@@ -99,61 +95,32 @@ public class PacienteService {
 
     @GET
     @Path("/obtenerEpisodios/{cedula}/{fechaInicial}/{fechaFinal}")
-    public List<Episodio> verEpisodioFecha(@PathParam("cedula") String cedula, @PathParam("fechaInicial") String fechaInicial, @PathParam("fechaFinal") String fechaFinal) {//int ced, String fechainicial, String fechafinal) 
-        try {
-            Paciente pacient = clinica.buscarPaciente(Integer.parseInt(cedula));
-            if (pacient != null) {
-                return pacient.getEpisodiosFechas(fechaInicial, fechaFinal);
-            } else {
-                System.out.println("paciente nulo");
-                return new ArrayList<Episodio>();
-            }
-
-        } catch (Exception e) {
-            return new ArrayList<Episodio>();
-        }
+    public List<Episodio> verEpisodioFecha(@PathParam("cedula") int cedula, @PathParam("fechaInicial") String fechaInicial, @PathParam("fechaFinal") String fechaFinal) {//int ced, String fechainicial, String fechafinal)         
+        TypedQuery<Episodio> query = (TypedQuery<Episodio>) entityManager.createQuery("SELECT c FROM Episodio c WHERE c.cedula = :nCedula AND c.fecha >= :fechaInicial AND c.fecha <= :fechaFinal");
+        query.setParameter("nCedula", cedula);
+        query.setParameter("fechaInicial", fechaInicial);
+        query.setParameter("fechaFinal", fechaFinal);
+        List<Episodio> episodios =query.getResultList();
+                
+        return episodios;
     }
 
     @GET
     @Path("/obtenerEpisodios/{cedula}/{id}")
-    public Episodio verEpisodioFecha(@PathParam("cedula") String cedula, @PathParam("id") long id) {
-        try {
-            Paciente pacient = clinica.buscarPaciente(Integer.parseInt(cedula));
-            if (null == pacient) {
-                System.out.println("paciente nulo");
-                return new Episodio();
-            } else {
-                return pacient.getEpisodio(id);
-            }
-
-        } catch (Exception e) {
-            return new Episodio();
-        }
+    public List<Episodio> verEpisodioFecha(@PathParam("cedula") int cedula, @PathParam("id") String id) {        
+        TypedQuery<Episodio> query = (TypedQuery<Episodio>) entityManager.createQuery("SELECT c FROM Episodio c WHERE c.id = :nId");
+        query.setParameter("nId", id);
+        List<Episodio> episodios =query.getResultList();
+                
+        return episodios;
     }
 
     @GET
     @Path("/obtenerEpisodios/{cedula}")
-    public List<Episodio> verEpisodioFecha(@PathParam("cedula") String cedula) {
-        try {
-            Paciente pacient = clinica.buscarPaciente(Integer.parseInt(cedula));
-            if (null == pacient) {
-                System.out.println("paciente nulo");
-                return new ArrayList<Episodio>();
-            } else {
-                return pacient.getEpisodios();
-            }
-
-        } catch (Exception e) {
-            return new ArrayList<Episodio>();
-        }
-    }
-    @GET
-    @Path("/obtenerCatalizadores/{cedula}")
-    public List<String> verCatalizadores(@PathParam("cedulaPaciente") int cedulaPaciente)
-    {
-          TypedQuery<String> query = (TypedQuery<String>) entityManager.createQuery("SELECT e.alimentos, e.bebidas,e.medicamentos FROM EPISODIO e,  PACIENTE p WHERE p.cedula = :cedulaPaciente AND p.id = e.id ");
-		query.setParameter("cedulaPaciente",cedulaPaciente);
-                List<String> s= query.getResultList();
-                return s;
+    public List<Episodio> verEpisodioFecha(@PathParam("cedula") int cedula) {
+        TypedQuery<Episodio> query = (TypedQuery<Episodio>) entityManager.createQuery("SELECT c FROM Episodio c WHERE c.cedula = :nCedula ORDER BY C.fecha");
+        List<Episodio> episodios =query.setParameter("nCedula", cedula).getResultList();
+                
+        return episodios;
     }
 }
