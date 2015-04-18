@@ -5,8 +5,6 @@
  */
 package com.example.models;
 
-import com.sun.istack.NotNull;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,12 +42,10 @@ public class Paciente implements Serializable {
     @Field(name = "_id")
     private String id;
 
-    @NotNull
     @Column(name = "create_at", updatable = false)
     @Temporal(TemporalType.DATE)
     private Calendar createdAt;
 
-    @NotNull
     @Column(name = "updated_at")
     @Temporal(TemporalType.DATE)
     private Calendar updatedAt;
