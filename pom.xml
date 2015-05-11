@@ -92,17 +92,19 @@
             <version>1.0.RC2</version>
             <!--            <scope>runtime</scope>-->
         </dependency> 
+        
+         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.6</version>
+            <type>jar</type>
+        </dependency>
    
         <dependency>
             <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-httpclient</artifactId>
             <version>1.0.RC2</version>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>co.edu.uniandes.security</groupId>
-            <artifactId>Security</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>

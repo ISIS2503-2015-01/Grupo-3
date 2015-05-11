@@ -26,6 +26,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import com.stormpath.sdk.application.Application;
+import javax.ws.rs.GET;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -71,4 +72,13 @@ public class UserService {
         return Response.status(status).entity(token).build();
     }
 
+    @Path("/login")
+    @GET
+    public Response login() {
+        int status = 500; //Codigo de error en el servidor
+        String token = "User and/or password wrong";
+        
+
+        return Response.status(status).entity(token).build();
+    }
 }
