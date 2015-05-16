@@ -9,6 +9,7 @@ import com.example.PersistenceManager;
 import com.example.models.Doctor;
 import com.example.models.Episodio;
 import com.example.models.Paciente;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -109,7 +110,7 @@ public class DoctorService {
         TypedQuery<Episodio> query = (TypedQuery<Episodio>) entityManager.createQuery("SELECT c FROM Episodio c WHERE c.cedula = :cedulaPaciente");
         List<Episodio> episodios = query.setParameter("cedulaPaciente", cedulaPaciente).getResultList();
 
-        return episodios; 
+        return hashEpisodio(episodios); 
     }
 
     @GET
@@ -123,7 +124,7 @@ public class DoctorService {
         query.setParameter("fechaFinal", fechaFinal);
         List<Episodio> episodios =query.getResultList();
                 
-        return episodios;
+        return hashEpisodio(episodios);
     }
 
     @GET
@@ -133,8 +134,31 @@ public class DoctorService {
         
         TypedQuery<Episodio> query = (TypedQuery<Episodio>) entityManager.createQuery("SELECT c FROM Episodio c WHERE c.id = :nId");
         List<Episodio> episodios = query.setParameter("nId", cedulaPaciente).getResultList();
-
-        return episodios;
+        
+        return hashEpisodio(episodios);
     }
 
+    public List<Episodio> hashEpisodio(List<Episodio> lista)
+    {
+        String original = new String();
+        
+        for (Episodio lista1 : lista) {
+            original += lista1.toString();
+        }
+        try{
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		md.update(original.getBytes());
+		byte[] digest = md.digest();
+		StringBuffer sb = new StringBuffer();
+		for (byte b : digest) {
+			sb.append(String.format("%02x", b & 0xff));
+		}
+                Episodio hash = new Episodio();
+                hash.setId(sb.toString());
+                lista.add(hash);
+                System.out.println("Digest(in hex format):: " + sb.toString());
+        }
+        catch(Exception a){System.out.println("Se jodio esta miÃ©rcoles");}
+        return lista;
+    }
 }

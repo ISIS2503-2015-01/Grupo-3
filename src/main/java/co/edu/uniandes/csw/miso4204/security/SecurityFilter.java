@@ -20,7 +20,7 @@ import org.apache.shiro.web.util.WebUtils;
 
 public class SecurityFilter extends AuthenticatingFilter{
  
-    @Override
+    @Override 
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse sr1) throws Exception {
         HttpServletRequest httpRequest = WebUtils.toHttp(request);
         return new JwtToken(httpRequest.getHeader("x_rest_user"));

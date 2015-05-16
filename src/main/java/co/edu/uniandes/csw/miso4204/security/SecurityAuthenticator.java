@@ -20,7 +20,12 @@ import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.Clients;
 import com.stormpath.sdk.resource.ResourceException;
 import com.stormpath.sdk.tenant.Tenant;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.Authenticator;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 
 /**
@@ -31,8 +36,6 @@ public class SecurityAuthenticator implements Authenticator {
  
  
     public AuthenticationInfo authenticate(AuthenticationToken at) throws AuthenticationException {
-        UsernamePasswordToken u = (UsernamePasswordToken) at;
-        
         JwtToken authToken = (JwtToken) at;
         if (authToken.getToken() != null) {
             if (!authToken.getToken().equals("")) {
