@@ -28,7 +28,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
-            <version>7.6.0.v20120127</version>
+            <version>9.0.0.v20130308</version>
         </dependency>
 
         <!-- Jersey -->
@@ -93,7 +93,7 @@
             <!--            <scope>runtime</scope>-->
         </dependency> 
         
-         <dependency>
+        <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.6</version>
@@ -134,6 +134,17 @@
                     <artifactId>lifecycle-mapping</artifactId>
                     <version>1.0.0</version>
                     <configuration>
+                        <connectors>
+                            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                                <port>8081</port>
+                            </connector>
+                            <connector implementation="org.eclipse.jetty.server.ssl.SslSocketConnector">
+                                <port>8443</port>
+                                <keystore>jetty-ssl.keystore</keystore>
+                                <password>mypassword</password>
+                                <keyPassword>mypassword</keyPassword>
+                            </connector>
+                        </connectors>
                         <lifecycleMappingMetadata>
                             <pluginExecutions>
                                 <pluginExecution>
